@@ -10,12 +10,12 @@ if "DEBUG" in os.environ:
 
 def registerService(etcd, serviceId, cid, address, hostName):
 	opener = urllib2.build_opener(urllib2.HTTPHandler)
-	# headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 
-	nameData = urllib.urlencode({'value': hostName, 'ttl': 5})
-	nameReq = urllib2.Request('http://'+etcd+'/v2/keys/svc/'+serviceId+'/name', nameData)
-	nameReq.get_method = lambda: 'PUT'
-	opener.open(nameReq)
+	if hostName is not None:
+		nameData = urllib.urlencode({'value': hostName, 'ttl': 5})
+		nameReq = urllib2.Request('http://'+etcd+'/v2/keys/svc/'+serviceId+'/name', nameData)
+		nameReq.get_method = lambda: 'PUT'
+		opener.open(nameReq)
 
 	addyData = urllib.urlencode({'value': address, 'ttl': 5})
 	addyReq = urllib2.Request('http://'+etcd+'/v2/keys/svc/'+serviceId+'/instances/'+cid, addyData)
@@ -105,6 +105,8 @@ if 'HOST_NAME' in os.environ:
 
 
 seconds = 30
+logging.info(hc)
+
 if waitForServiceStart(hc, seconds): 
 
 	if initRegistration(etcd, serviceId, cid, address, hostName, replacing):
@@ -116,6 +118,6 @@ if waitForServiceStart(hc, seconds):
 			logging.info(cid+" health check failed, exiting")
 
 else:
-	logging.info("service "+cid+ "didn't start for "+seconds+" seconds, giving up")
+	logging.info("service "+cid+ "didn't start for 30 seconds, giving up")
 
 
