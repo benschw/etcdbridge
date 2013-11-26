@@ -6,13 +6,10 @@ RUN apt-get upgrade -y
 
 RUN apt-get install -y python python-setuptools python-pip git
 RUN easy_install redis 
-RUN pip install etcd-py requests
 
 # health check deps
 RUN apt-get install -y curl telnet
 
-RUN cd /opt && git clone https://github.com/transitorykris/etcd-py.git
-RUN cd /opt/etcd-py && python setup.py install
 
 ADD ./start.py /opt/start.py
 
